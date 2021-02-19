@@ -4,6 +4,7 @@ import com.typesafe.scalalogging.LazyLogging
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.functions.col
 import io.opentargets.etl.literature.spark.Helpers
+import io.opentargets.etl.literature.spark.Helpers.IOResource
 import org.apache.spark.sql._
 
 object Grounding extends Serializable with LazyLogging {
@@ -152,7 +153,12 @@ object Grounding extends Serializable with LazyLogging {
     val entities = loadEntities(inputDataFrames("abstract").data)
     val resolvedEntities = resolveEntities(entities, luts)
 
-    resolvedEntities.write.json("testOutput")
+    val outputs = context.configuration.empc.outputs
+    logger.info(s"write to ${context.configuration.common.output}/disease")
+    val dataframesToSave = Map(
+      "disease" -> IOResource(resolvedEntities, outputs.grounding)
+    )
 
+    Helpers.writeTo(dataframesToSave)
   }
 }

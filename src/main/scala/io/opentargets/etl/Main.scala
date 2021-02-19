@@ -12,8 +12,14 @@ object Main {
 
 object ETL extends LazyLogging {
 
-  def applySingleStep(step: String): Unit ={
-      print(step)
+  def applySingleStep(step: String)(implicit context: ETLSessionContext): Unit = {
+    step match {
+      case "grounding" =>
+        logger.info("run step Entity Grounding EPMC")
+        Grounding()
+      case _ => logger.warn(s"step $step is unknown so nothing to execute")
+    }
+    logger.info(s"finished to run step ($step)")
   }
 
   def apply(steps: Seq[String]): Unit = {
@@ -21,6 +27,7 @@ object ETL extends LazyLogging {
     ETLSessionContext() match {
       case Right(otContext) =>
         implicit val ctxt: ETLSessionContext = otContext
+
         logger.debug(ctxt.configuration.toString)
 
         val etlSteps =

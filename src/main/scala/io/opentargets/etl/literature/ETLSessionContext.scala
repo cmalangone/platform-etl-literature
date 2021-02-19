@@ -7,7 +7,7 @@ import io.opentargets.etl.literature.Configuration.OTConfig
 import pureconfig.error.ConfigReaderFailures
 
 
-case class ETLSessionContext(configuration: OTConfig,otContext: SparkSession)
+case class ETLSessionContext(configuration: OTConfig, sparkSession: SparkSession)
 
 object ETLSessionContext extends LazyLogging {
   val progName: String = "ot-platform-etl-literature"

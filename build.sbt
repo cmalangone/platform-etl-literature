@@ -19,5 +19,13 @@ lazy val root = (project in file("."))
     libraryDependencies ++= configDeps,
     libraryDependencies ++= loggingDeps,
     libraryDependencies += typeSafeConfig,
-    libraryDependencies ++= sparkDeps
+    libraryDependencies ++= sparkDeps,
+    assemblyMergeStrategy in assembly := {
+      case PathList("META-INF", "services", "org.apache.hadoop.fs.FileSystem") =>
+        MergeStrategy.filterDistinctLines
+      case PathList("META-INF", "services", "org.apache.spark.sql.sources.DataSourceRegister") =>
+        MergeStrategy.concat
+      case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+      case _                             => MergeStrategy.first
+    }
   )

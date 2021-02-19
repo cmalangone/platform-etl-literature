@@ -14,17 +14,16 @@ object Configuration extends LazyLogging {
 
   case class EMPCOutput( grounding: IOResourceConfig )
 
-  case class EMPCSection(
+  case class GroundingSection(
                          otLuts: IOResourceConfig,
-                         nmpAbstract: IOResourceConfig,
-                         nmpFullText: IOResourceConfig,
+                         epmc: IOResourceConfig,
                          outputs: EMPCOutput
                         )
 
   case class OTConfig(
                        sparkUri: Option[String],
                        common: Common,
-                       empc: EMPCSection
+                       grounding: GroundingSection
                      )
 
   def load: ConfigReader.Result[OTConfig] = {

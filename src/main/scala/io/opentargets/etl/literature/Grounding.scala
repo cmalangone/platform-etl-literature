@@ -138,22 +138,21 @@ object Grounding extends Serializable with LazyLogging {
 
     logger.info("Grounding step")
 
-    val empcConfiguration = context.configuration.empc
+    val empcConfiguration = context.configuration.grounding
 
     val mappedInputs = Map(
       // search output of ETL. (disease,drug,target)
       "luts" -> empcConfiguration.otLuts,
-      "abstract" -> empcConfiguration.nmpAbstract,
-      "fullText" -> empcConfiguration.nmpFullText
+      "epmc" -> empcConfiguration.epmc
     )
 
     val inputDataFrames = Helpers.readFrom(mappedInputs)
 
     val luts = broadcast(loadLUTs(inputDataFrames("luts").data))
-    val entities = loadEntities(inputDataFrames("abstract").data)
+    val entities = loadEntities(inputDataFrames("epmc").data)
     val resolvedEntities = resolveEntities(entities, luts)
 
-    val outputs = context.configuration.empc.outputs
+    val outputs = context.configuration.grounding.outputs
     logger.info(s"write to ${context.configuration.common.output}/disease")
     val dataframesToSave = Map(
       "disease" -> IOResource(resolvedEntities, outputs.grounding)
